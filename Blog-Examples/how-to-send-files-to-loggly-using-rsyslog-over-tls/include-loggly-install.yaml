@@ -1,0 +1,57 @@
+---
+# code provided under the Creative Commons License: http://creativecommons.org/licenses/by-nc-nd/4.0/
+# Author: doatt Site: doatt.com
+
+- name: rsyslog-gnutls
+  sudo: yes
+  yum:
+    name: rsyslog-gnutls
+    state: latest
+  notify:
+    - restartrsyslog
+  register: resultingdata
+- debug: var=resultingdata
+
+- name: ensure /etc/rsyslog.d/keys directory exists
+  sudo: yes
+  file:
+    path: /etc/rsyslog.d/keys
+    state: directory
+    mode: 0755
+  notify:
+    - restartrsyslog
+  register: resultingdata
+- debug: var=resultingdata
+
+- name: ensure /etc/rsyslog.d/keys/ca.d directory exists
+  sudo: yes
+  file:
+    path: /etc/rsyslog.d/keys/ca.d
+    state: directory
+    mode: 0755
+  notify:
+    - restartrsyslog
+  register: resultingdata
+- debug: var=resultingdata
+
+- name: copy loggly_full.crt
+  sudo: yes
+  copy:
+    src: "{{ fileslocation }}file-loggly_full.crt"
+    dest: /etc/rsyslog.d/keys/ca.d/loggly_full.crt
+    mode: 0644
+  notify:
+    - restartrsyslog
+  register: resultingdata
+- debug: var=resultingdata
+
+- name: copy 22-loggly.conf
+  sudo: yes
+  copy:
+    src: "{{ fileslocation }}file-loggly.22-loggly.conf"
+    dest: /etc/rsyslog.d/22-loggly.conf
+    mode: 0644
+  notify:
+    - restartrsyslog
+  register: resultingdata
+- debug: var=resultingdata
